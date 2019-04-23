@@ -215,7 +215,6 @@ def grapDecisionTree(fileName):
 if __name__ == '__main__':
     dataSet,labels=createDataSet()
     bestFeatureLabels=[]
-    # calInfoGainAndChooseBsetFeature(dataSet)
     decisionTree=creatDecisionTree(dataSet,labels,bestFeatureLabels)
     testVec=[0,1]#没有自己的房子；有工作
     classLabel=decisionTreeClassifier(decisionTree,bestFeatureLabels,testVec)#bestFeatureLabels在creatDecisionTree()函数中已经改变——和JAVA不一样
