@@ -43,7 +43,9 @@ def preprocessingData(dataSet,labels):
       Description: 数据预处理
       sklearn中fit函数不支持字符串，所以要把数据换成float型
       使用pandas和labelEncoder序列化数据
-      labelEncoder把字符串转化为增量值
+      先把原始数据的特征和特征值用字典保存———然后字典生成pandas格式数据表
+      ————最后吧pandas数据进行序列化
+      labelEncoder.fit_transform把字符串转化为增量值
       Params:
             No such property: code for class: Script1
       Return:
