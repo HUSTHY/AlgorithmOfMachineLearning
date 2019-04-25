@@ -8,6 +8,7 @@ import pydotplus
   Description:决策树的可视化 用GraphViz+pydotPl库，树的生成还是用的sklearn的tree.DecisionTreeClassifier
   Author: 
         HY
+        
   Modify: 
         2019/4/24 12:38
 """
@@ -38,6 +39,6 @@ if __name__ == '__main__':
     tree.export_graphviz(decisionTree,out_file=dot_data,max_depth=100,
                         feature_names=lenses_pd.keys(),class_names=decisionTree.classes_,
                          filled=True,rounded=True,special_characters=True)
-    graphTree=pydotplus.graph_from_dot_data(dot_data.getvalue().replace('helvetica','"Microsoft YaHei"'))
+    graphTree=pydotplus.graph_from_dot_data(dot_data.getvalue().replace('helvetica','"Microsoft YaHei"'))#replace后面是为了把helvetica修改为微软的字体
     graphTree.write_pdf('decisionTree.pdf')#树保存为PDF格式文件
 

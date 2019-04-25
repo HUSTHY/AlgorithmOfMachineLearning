@@ -5,6 +5,21 @@ from sklearn.preprocessing import LabelEncoder
 
 
 def useOwnDecisionTreeForClassify(dataSet,labels,testVect):
+
+    """
+      Description:
+      Params:
+            dataSet——数据集，包含了分类列，便于计算信息熵、增益等
+            labels——标签集，特征名的list
+            testVect——用来预测的数据
+      Return:
+            resultClassify——返回分类结果
+      Author:
+            HY
+      Modify:
+            2019/4/24 15:24
+    """
+
     bestFeatureLabels=[]
     ownDecTree=OWNDecTreeClassifier.creatDecisionTree(dataSet,labels,bestFeatureLabels)
     resultClassify=OWNDecTreeClassifier.decisionTreeClassifier(ownDecTree,bestFeatureLabels,testVect)
@@ -47,9 +62,11 @@ def preprocessingData(dataSet,labels):
       ————最后吧pandas数据进行序列化
       labelEncoder.fit_transform把字符串转化为增量值
       Params:
-            No such property: code for class: Script1
+            dataSet——数据集
+            labels——标签集
       Return:
-            No such property: code for class: Script1
+            lensesPd——返回序列化后的数据集（只有自变量）
+            targetList——目标集（因变量）
       Author:
             HY
       Modify:
@@ -85,7 +102,7 @@ if __name__ == '__main__':
     labels=['age','prescript症状','astigmatio散光','tearRate眼泪数量']
     labels1=['age','prescript症状','astigmatio散光','tearRate眼泪数量']
     testVec=['normal','yes','hyper','pre']
-    # print(useOwnDecisionTreeForClassify(dataSet,labels,testVec))
+    print(useOwnDecisionTreeForClassify(dataSet,labels,testVec))
     lensespd,targetList=preprocessingData(dataSet1,labels1)
     testVec1=[[0,0,1,0]]#不是按照最优的特征来的，而是按照标签列序列化映射关系而来的
     result=useSKLearn_DecisionTreeForClassify(lensespd.values.tolist(),targetList,testVec1)
