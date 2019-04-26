@@ -5,7 +5,7 @@ def getDataSet(fileName):
         dataSet=[ele.strip().split('\t') for ele in file.readlines()]
         return dataSet
 
-def naiveBayesianClassifier(dataSet,testVec,type):
+def naiveBayesianClassifier(dataSet,testVec):
 
     """
       Description:
@@ -21,40 +21,6 @@ def naiveBayesianClassifier(dataSet,testVec,type):
       Modify:
             2019/4/25 21:18
     """
-    if type==0:
-        return naiveBayesianClassifierForDiscreteData(dataSet,testVec)
-    else:
-        return naiveBayesianClassifierForContinuousData(dataSet,testVec)
-
-def naiveBayesianClassifierForDiscreteData(dataSet,testVec):
-    targetList=[]
-    for ele in dataSet:#目标集
-        targetList.append(ele[-1])
-    targetDic={}#统计目标集分类情况
-    for ele in targetList:
-        if ele not in targetDic.keys():
-            targetDic[ele]=0
-        targetDic[ele]+=1
-    BiggestPostPro=0
-    result=None
-    for key,val in targetDic.items():#计算后验概率对每一个分类都要计算
-        PostPro=float(int(val)/len(targetList))
-        subDataset=[]
-        for ele in dataSet:#进行分类
-            if ele[-1]==key:
-                subDataset.append(ele)
-        for tes in testVec:#特征之间相互独立，计算指定分类情况和特征的下，某一特征值的概率
-            list=[]
-            for s in subDataset:#统计相同特征值的数目
-                if tes==s[testVec.index(tes)]:
-                    list.append(s)
-            PostPro*=float(len(list)/len(subDataset))
-        if BiggestPostPro<PostPro:
-            BiggestPostPro=PostPro
-            result=key
-    return BiggestPostPro,result
-
-def naiveBayesianClassifierForContinuousData(dataSet,testVec):
     BiggestPsotProb=0
     targetList=[]
     targetDic={}
@@ -75,22 +41,35 @@ def naiveBayesianClassifierForContinuousData(dataSet,testVec):
             index=testVec.index(t)
             coluList=[]
             for ele in subDataSet:
-                coluList.append(float(ele[index]))
+                if not ele[index].isalpha():
+                    coluList.append(ele[index])
+                else:
+                    if t==ele[index]:
+                        coluList.append(ele[index])
             #计算方法和期望用到numpy，计算高斯分布用到scipy.stats.norm(excep,std).pdf(t)这个函数链式很关键
-            excep=np.mean(coluList)
-            std=np.std(coluList)
-            prob*=ss.norm(excep,std).pdf(t)
+            if not coluList[0].isalpha():#判定不是字母
+                l=list(map(float,coluList))
+                excep=np.mean(l)
+                # 这里要用到极大似然估计，方差是/n 而不是/n-1
+                var=np.var(l)*len(coluList)/(len(coluList)-1)
+                #标准差
+                std=pow(var,0.5)
+                #参数为均值和标准差
+                prob*=ss.norm(excep,std).pdf(t)
+            else:
+                prob*=float(len(coluList)/len(subDataSet))
+
         if BiggestPsotProb<prob:
             BiggestPsotProb=prob
             result=key
-    return  BiggestPsotProb,result
+    return BiggestPsotProb,result
 
 if __name__ == '__main__':
     dataSet=getDataSet('girlMarryToBoy.txt')
-    testVec=['帅','不好','高','不上进']
-    print(naiveBayesianClassifier(dataSet,testVec,0))
+    testVec=['不帅','不好','矮','不上进']
+    print(naiveBayesianClassifier(dataSet,testVec))
     dataSet1=getDataSet('SexClassificationDataSet.txt')
     testVec1=[6,130,8]
-    print(naiveBayesianClassifier(dataSet1,testVec1,1))
+    print(naiveBayesianClassifier(dataSet1,testVec1))
 
 
