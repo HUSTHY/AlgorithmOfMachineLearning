@@ -8,7 +8,7 @@ def getDataSet(fileName):
 def naiveBayesianClassifier(dataSet,testVec):
 
     """
-      Description:
+      Description:计算中涉及到离散和连续型数据都做了处理——这里连续型只考虑使用概率分布的方法来做，而不是考虑离散化数据
       Params:
             dataSet——训练数据
             testVec——用来分类的数据集
@@ -56,7 +56,7 @@ def naiveBayesianClassifier(dataSet,testVec):
                 std=pow(var,0.5)
                 #参数为均值和标准差
                 prob*=ss.norm(excep,std).pdf(t)
-            else:
+            else:#计算离散变量
                 prob*=float(len(coluList)/len(subDataSet))
 
         if BiggestPsotProb<prob:
@@ -71,5 +71,7 @@ if __name__ == '__main__':
     dataSet1=getDataSet('SexClassificationDataSet.txt')
     testVec1=[6,130,8]
     print(naiveBayesianClassifier(dataSet1,testVec1))
+
+
 
 
