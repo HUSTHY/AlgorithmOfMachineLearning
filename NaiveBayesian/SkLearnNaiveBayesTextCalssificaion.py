@@ -153,10 +153,6 @@ def classificationResult(train_all_words_list,trainDataList,trainCalssList,testD
 
     return resultClassList,biggestAccurate,bestDeleteN,deleteNs,accurates
 
-def kkkkk(a,b):
-    a
-    return True
-
 if __name__ == '__main__':
     time1=time.time()
     train_all_words_list,trainCalssList,trainDataList=TextProcessing('./newsData/trainData')
