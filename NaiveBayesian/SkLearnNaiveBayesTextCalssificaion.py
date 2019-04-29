@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 """
 使用sklearn库的朴素贝叶斯来进行文本分类
+文本的切分
 思路：
     1、收集到的数据进行整理，放置在类名的文件夹下面
     2、读取文件夹下面的文件，获得训练集数据
@@ -59,6 +60,19 @@ def TextProcessing(folder_path):
     return all_words_list,calssList,dataList
 
 def createFeatureVocabulary(all_words_list,deleteN,stopWords_set=set()):
+
+    """
+      Description:生成词汇表，注意停用词、高频词的删除
+      Params:
+            deleteN——删除的词数
+      Return:
+            featureVocabulary——特征词汇表
+      Author:
+            HY
+      Modify:
+            2019/4/29 23:52
+    """
+
     featureVocabulary=[]
     demension=1
     for i in range(deleteN,len(all_words_list),1):
@@ -80,24 +94,38 @@ def getStopWordsList(fileName):
 def createDataListFeatureVec(dataList,featureVocabulary):
 
     """
-      Description:内部类生成所有文件的特征选取
+      Description:文本根据词汇表向量化
       Params:
-            dataList——
+
       Return:
-            No such property: code for class: Script1
+            dataListFeatureVec——返回向量化的文本数据
       Author:
             HY
       Modify:
-            2019/4/29 21:37
+            2019/4/29 23:54
     """
-
     def txtfeatureVec(text,featureVocabulary):
-        features=[1 if word in text else 0 for word in featureVocabulary]
+        #必须去重——用集合，不然程序运行起来要很多时间
+        textSet=set(text)
+        features=[1 if word in textSet else 0 for word in featureVocabulary]
         return features
     dataListFeatureVec=[txtfeatureVec(ele,featureVocabulary) for ele in dataList]
     return dataListFeatureVec
 
-def classificationResult(train_all_words_list,trainDataList,testDataList,testClassList,stopWords):
+def classificationResult(train_all_words_list,trainDataList,trainCalssList,testDataList,testClassList,stopWords):
+
+    """
+      Description:训练数据集的总词表(去重了的）以及、
+      Params:
+
+      Return:
+
+      Author:
+            HY
+      Modify:
+            2019/4/29 23:54
+    """
+
     deleteNs=range(0,500,10)
     biggestAccurate=0
     bestDeleteN=0
@@ -105,7 +133,10 @@ def classificationResult(train_all_words_list,trainDataList,testDataList,testCla
     accurates=[]
     for deleteN in deleteNs:
         featureVocabulary=createFeatureVocabulary(train_all_words_list,deleteN,stopWords)
+        time1=time.time()
         trainDataListFeatureVec=createDataListFeatureVec(trainDataList,featureVocabulary)
+        time2=time.time()
+        print(time2-time1)
         classfier=nb.MultinomialNB().fit(trainDataListFeatureVec,trainCalssList)
         testDataListFeatureVec=createDataListFeatureVec(testDataList,featureVocabulary)
         classList=classfier.predict(testDataListFeatureVec)
@@ -119,17 +150,23 @@ def classificationResult(train_all_words_list,trainDataList,testDataList,testCla
             biggestAccurate=accurate
             bestDeleteN=deleteN
             resultClassList=copy.deepcopy(classList)
+
     return resultClassList,biggestAccurate,bestDeleteN,deleteNs,accurates
 
+def kkkkk(a,b):
+    a
+    return True
 
 if __name__ == '__main__':
     time1=time.time()
     train_all_words_list,trainCalssList,trainDataList=TextProcessing('./newsData/trainData')
     stopWords=getStopWordsList('./newsData/stopwords_cn.txt')
     test_all_words_list,testClassList,testDataList=TextProcessing('./newsData/testData')
-    resultClassList,biggestAccurate,bestDeleteN,deleteNs,accurates=classificationResult(train_all_words_list,trainDataList,testDataList,testClassList,stopWords)
     time2=time.time()
-    print('Finished in %d seconds!'%(time2-time1))
+    print(time2-time1)
+    resultClassList,biggestAccurate,bestDeleteN,deleteNs,accurates=classificationResult(train_all_words_list,trainDataList,trainCalssList,testDataList,testClassList,stopWords)
+    time3=time.time()
+    print('Finished in %d seconds!'%(time3-time2))
     print(resultClassList)
     print('最大的正确率是：%d%%'%(biggestAccurate*100))
     print(bestDeleteN)
