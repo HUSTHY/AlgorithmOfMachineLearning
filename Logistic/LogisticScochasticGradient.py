@@ -67,11 +67,11 @@ def gradAscent(dataMat,labels):
     dataMatrix=np.mat(dataMat)
     labelMat=np.mat(labels).transpose()#转置
     m,n=np.shape(dataMatrix)
-    bestWeights=np.ones((n,1))
-    weights_arra=np.array([])
+    bestWeights=np.ones(n)
+    weights_array=np.array([])
     aplha=0.001
     biggestAccurate=0
-    for i in range(1,5000,50):
+    for i in range(1,10000,50):
         weights=np.ones((n,1))
         cycle=0
         while cycle<i:
@@ -79,18 +79,19 @@ def gradAscent(dataMat,labels):
             temp=aplha*dataMatrix.transpose()*(labelMat-sigmoid(dataMatrix*weights))
             weights=weights+temp
             cycle+=1
-            if i==601:
-                weights_arra=np.append(weights_arra,weights)
+            if i==6001:
+                weights_array=np.append(weights_array,weights)
         accurte=calculateAccurate(dataMatrix,labels,weights)
         if biggestAccurate<accurte:
             biggestAccurate=accurte
             maxCycle=i
-            bestWeights=np.mat(weights)
+            bestWeights=np.array(weights)
     print("********************************************")
     print(bestWeights)
     print('最佳迭代次数:%d——分类准确率%d%%'%(maxCycle,biggestAccurate*100))
+    weights_array=weights_array.reshape(6001,n)
 
-    return bestWeights.getA(),maxCycle
+    return bestWeights,maxCycle,weights_array
 
 
 
@@ -109,32 +110,32 @@ def gradScochasticAscent(dataMat,labels):
       Modify:
             2019/5/1 17:24
     """
-    dataMatrix=np.mat(dataMat)
-    labelMat=np.mat(labels).transpose()#转置
+    dataMatrix=np.array(dataMat)
     m,n=np.shape(dataMatrix)
-    bestWeights=np.ones((n,1))
+    bestWeights=np.ones(n)
     biggestAccurate=0
     weights_array=np.array([])
-    for j in range(150):
+    for j in range(1000):
         dataIndex=list(range(m))
-        weights=np.ones((n,1))
+        weights=np.ones(n)
         for i in range(m):
             randomIndex=int(random.uniform(0,len(dataIndex)))
             aplha=1/(1+i+j)+0.001
-            temp=aplha*dataMatrix[randomIndex,:].transpose()*(labelMat[randomIndex]-sigmoid(dataMatrix[randomIndex,:]*weights))
-            weights=weights+temp
-            weights_array=np.append(weights_array,weights)
+            h=sigmoid(sum(dataMatrix[randomIndex]*weights))
+            temp=labels[randomIndex]-h
+            weights=weights+aplha*dataMatrix[randomIndex].transpose()*temp
+            weights_array=np.append(weights_array,weights,axis=0)#axis=0矩阵列数相同，竖着加；axis=1行数相同，横着加
             del(dataIndex[randomIndex])
         accurte=calculateAccurate(dataMatrix,labels,weights)
         if biggestAccurate<accurte:
             biggestAccurate=accurte
             maxCycle=j
-            bestWeights=np.mat(weights)
+            bestWeights=np.array(weights)
+    weights_array=weights_array.reshape(1000*m,n)
     print("********************************************")
     print(bestWeights)
     print('最佳迭代次数:%d——分类准确率%d%%'%(maxCycle,biggestAccurate*100))
-
-    return bestWeights.getA(),maxCycle
+    return bestWeights,maxCycle,weights_array
 
 def calculateAccurate(dataMat,labels,weight):
 
@@ -151,7 +152,7 @@ def calculateAccurate(dataMat,labels,weight):
       Modify:
             2019/5/1 17:29
     """
-    result=sigmoid(dataMat*weight)
+    result=sigmoid(np.dot(dataMat,weight))
     errcount=0
     for i in range(len(labels)):
         if labels[i]==1:
@@ -162,22 +163,62 @@ def calculateAccurate(dataMat,labels,weight):
                 errcount+=1
     accurte=(len(labels)-errcount)/len(labels)
     return accurte
-def pltwightsAndIterationCount(weights1,weight2):
+def pltwightsAndIterationCount(weights1,weights2):
     fig=plt.figure(figsize=(13,7))
     axes1=plt.subplot(321)
-    x1=range(1,len())
-    axes2=plt.subplot(322)
-    axes3=plt.subplot(326)
-    axes4=plt.subplot(324)
-    axes5=plt.subplot(325)
+    x1=range(0,len(weights1),1)
+    y1=weights1[:,0]
+    y2 = weights1[:,1]
+    y3 = weights1[:,2]
+
+    y4 = weights2[:,0]
+    y5 = weights2[:,1]
+    y6 = weights2[:,2]
+
+    axes1.plot(x1,y1,color='blue',alpha=0.5)
+    axes1.set_ylabel('w0')
+    axes1.set_title('随机梯度上升和迭代次数的关系')
+    axes2 = plt.subplot(323)
+    x2 = range(0, len(weights1))
+    axes2.plot(x2, y2, color='blue', alpha=0.5)
+    axes2.set_ylabel('w1')
+
+    axes3 = plt.subplot(325)
+    x3 = range(0, len(weights1))
+    axes3.plot(x3, y3, color='blue', alpha=0.5)
+    axes3.set_ylabel('w2')
+    axes3.set_xlabel('迭代次数')
+
+    axes4 = plt.subplot(322)
+    x4 = range(0, len(weights2)*100,100)
+    axes4.plot(x4, y4, color='blue', alpha=0.5)
+    axes4.set_ylabel('w0')
+    axes4.set_title('批量梯度上升和迭代次数的关系')
+
+    axes5 = plt.subplot(324)
+    x5 = range(0, len(weights2)*100,100)
+    axes5.plot(x5, y5, color='blue', alpha=0.5)
+    axes5.set_ylabel('w1')
+
+    axes6 = plt.subplot(326)
+    x6 = range(0, len(weights2)*100,100)
+    axes6.plot(x6, y6, color='blue', alpha=0.5)
+    axes6.set_ylabel('w2')
+    axes6.set_xlabel('迭代次数')
+
     plt.show()
 
 if __name__ == '__main__':
-    time1=time.time()
     dataMat,labels=loadData()
     weight=0
-    weight,maxCycle=gradScochasticAscent(dataMat,labels)
+    time1 = time.time()
+    weight,maxCycle,weights1=gradScochasticAscent(dataMat,labels)
+    time2 = time.time()
+    print('Finished in %s seconds' % (time2 - time1))
     plotDataWeights(weight)
-    time2=time.time()
-    print('Finished in %s seconds'%(time2-time1))
-    plttest()
+
+    time3=time.time()
+    weight, maxCycle, weights2=gradAscent(dataMat,labels)
+    time4=time.time()
+    print('Finished in %s seconds' % (time4 - time3))
+    pltwightsAndIterationCount(weights1,weights2)
