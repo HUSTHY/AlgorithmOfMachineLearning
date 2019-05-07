@@ -50,7 +50,7 @@ def naiveBayesianClassifier(dataSet,testVec):
             if not coluList[0].isalpha():#判定不是字母
                 l=list(map(float,coluList))
                 excep=np.mean(l)
-                # 这里要用到极大似然估计，方差是/n 而不是/n-1
+                # 这里要用到极大似然估计——极大似然估计中方差是/n-1 而不是/n
                 var=np.var(l)*len(coluList)/(len(coluList)-1)
                 #标准差
                 std=pow(var,0.5)

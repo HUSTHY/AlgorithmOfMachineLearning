@@ -37,7 +37,7 @@ def KNNClassify(InputNewData,trainDataset,labels,K,rule):
         sqDistanceList=sqDiffMat.sum(axis=1) #这是个行向量
         #矩阵元素开方列，得到真实距离
         distanceList=np.sqrt(sqDistanceList)
-        #距离排序后得到一个
+        #距离降序排序后得到一个list——只有index值
         sortedDistanceList=distanceList.reshape(1,trainDataDimension).argsort().reshape(trainDataDimension,1)#矩阵中argsort()函数只能是列向量才有用，数组没要求
 
         #记录分类类别次数的字典
@@ -62,11 +62,11 @@ def KNNClassify(InputNewData,trainDataset,labels,K,rule):
 
 
 '''运行main函数的时候就打开注释'''
-# if __name__ == '__main__':
-#     group,labels=creatTrainDataset()
-#     test=np.mat('101,20;35,99')
-#     time0=time.time()
-#     t=KNNClassify(test,group,labels,2,0)
-#     time1=time.time()
-#     print('耗时：',time1-time0)
-#     print(t)
+if __name__ == '__main__':
+    group,labels=creatTrainDataset()
+    test=np.mat('101,20;35,99')
+    time0=time.time()
+    t=KNNClassify(test,group,labels,2,0)
+    time1=time.time()
+    print('耗时：',time1-time0)
+    print(t)

@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import random
+from matplotlib.font_manager import FontProperties
 def loadData():
     fileName='testDataSet.txt'
     labels=[];dataMat=[]
@@ -119,7 +120,7 @@ def gradScochasticAscent(dataMat,labels):
         dataIndex=list(range(m))
         weights=np.ones(n)
         for i in range(m):
-            randomIndex=int(random.uniform(0,len(dataIndex)))
+            randomIndex=int(random.uniform(0,len(dataIndex)))#选择随机的一个样本来更新回归系数
             aplha=1/(1+i+j)+0.001
             h=sigmoid(sum(dataMatrix[randomIndex]*weights))
             temp=labels[randomIndex]-h
@@ -164,6 +165,8 @@ def calculateAccurate(dataMat,labels,weight):
     accurte=(len(labels)-errcount)/len(labels)
     return accurte
 def pltwightsAndIterationCount(weights1,weights2):
+    # 设置汉字格式
+    font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=14)
     fig=plt.figure(figsize=(13,7))
     axes1=plt.subplot(321)
     x1=range(0,len(weights1),1)

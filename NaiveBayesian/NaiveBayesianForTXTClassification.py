@@ -105,7 +105,9 @@ def trainNBS(trainMatrix,trainCategory):
         if trainCategory[i]==1:
             ClassSpamtotalWords+=sum(trainMatrix[i])
         allWords+=sum(trainMatrix[i])
+    #先验概率根据总词数的占比来计算的——垃圾邮件的先验概率
     pAbusive=float(ClassSpamtotalWords/allWords)
+    #做了拉普拉斯平滑处理
     p0Num=np.ones(numWords)
     p1Num=np.ones(numWords)
     p0Denom=2
@@ -124,7 +126,7 @@ def trainNBS(trainMatrix,trainCategory):
 
 def classifyNB(vecTwoClassify,p0Vec,p1Vec,pSpam):
     p1=sum(vecTwoClassify*p1Vec)+np.log(pSpam)
-    p0=sum(vecTwoClassify*p0Vec)+np.log(pSpam)
+    p0=sum(vecTwoClassify*p0Vec)+np.log(1-pSpam)
     # if p1>p0:
     #     return 1
     # else:
@@ -149,7 +151,7 @@ def spamMailTest():
     for i in range(1,26):
         wordList=textPares(open('spam/%d.txt'% i).read())
         docList.append(wordList)
-        classList.append(1)
+        classList.append(1)#垃圾邮件
         fullList.append(wordList)
         wordList=textPares(open('ham/%d.txt'% i).read())
         docList.append(wordList)
