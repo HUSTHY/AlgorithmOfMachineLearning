@@ -193,10 +193,6 @@ def showDatasAndClassificatonResult(dataSetArray,labelArray,wVec,b,alphas):
     for i,alpha in enumerate(alphas):
         if alpha>0 :
             x,y=dataSetArray[i]
-            print(x)
-            print(y)
-            # x=dataSetMat[i][:,0]
-            # y=dataSetMat[i][:,1]
             plt.scatter([x],[y],s=250,c='none',alpha=0.8,linewidths=1.0,edgecolors='black')
     plt.show()
 
@@ -206,6 +202,6 @@ if __name__ == '__main__':
     time1=time.time()
     alphas,b=simpleSMO(dataSetArray,labelArray,0.6,0.001,40)
     time2 =time.time()
-    print('finshed in %d seconds'%(time2-time1))
+    print('finshed in %f seconds'%(time2-time1))
     wVec=calculateWVec(alphas,dataSetArray,labelArray)
     showDatasAndClassificatonResult(dataSetArray,labelArray,wVec,b,alphas)
