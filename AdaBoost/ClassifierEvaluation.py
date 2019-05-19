@@ -165,13 +165,16 @@ def plotROCAndAUC(aggClassEst,classLabel):
     predictStrongth=aggClassEstList.argsort().tolist()
     plt.figure(figsize=(8,6))
     for ele in predictStrongth:
+        #多了一个TP，y方向上移动一步
         if classLabel[ele]==1.0:
             xDel=0;yDel=yStep
+        #多了一个FP，X方向上移动一步。
         else:
             xDel=xStep;yDel=0
             ySum+=cur[1]
         plt.plot([cur[0],cur[0]-xDel],[cur[1],cur[1]-yDel],c='r',linewidth='2')
         cur=[cur[0]-xDel,cur[1]-yDel]
+    #计算AUC
     AUC=ySum*xStep
     print('AUC:%f '%AUC)
     plt.plot([0,0.001],[0,0.001],c='r',label='AUC is:%0.4f'% AUC)
