@@ -32,7 +32,33 @@ def createDataSet():
                [2, 0, 0, 0, 'no']]
     labels = ['年龄', '有工作','有自己的房子', '信贷情况']             #分类属性
     return dataSet, labels                #返回数据集和分类属性
-
+def create_test_DataSet():
+    """
+      Description:
+      Params:
+            No such property: code for class: Script1
+      Return:
+            dataSet——特征数据
+            labels——分类标签
+      Author:
+            HY
+      Modify:
+            2019/4/22 15:03
+    """
+    dataSet = [['A', 'A', 'A', 'B', 0],         #数据集
+               ['A', 'A', 'B', 'B', 0],
+               ['A', 'A', 'C', 'B', 0],
+               ['A', 'A', 'A', 'A', 0],
+               ['A', 'B', 'C', 'B', 1],
+               ['B', 'B', 'B', 'A', 1],
+               ['B', 'A', 'C', 'A', 1],
+               ['B', 'B', 'A', 'A', 1],
+               ['A', 'B', 'A', 'B', 1],
+               ['A', 'C', 'C', 'A', 0],
+               ['A', 'C', 'B', 'B', 0],
+               ['B', 'C', 'B', 'A', 1]]
+    labels = ['X1', 'X2','X3', 'X4']             #分类属性
+    return dataSet, labels
 def calShannonEnt(dataSet):
     """
       Description:计算香农熵
@@ -110,8 +136,11 @@ def calInfoGainAndChooseBsetFeature(dataSet):
         for value in uniqueFeaturelist:
             subDataset=splitDataSet(dataSet,f,value)#按照选定的特征，根据特征值的不同分组
             prob=float(len(subDataset)/len(dataSet))
-            newEntropy+=prob*calShannonEnt(subDataset)#条件熵的计算
+            temp=calShannonEnt(subDataset)#条件熵的计算
+            print('条件熵为：prob*temp：%0.4f'%(prob*temp))
+            newEntropy+=prob*temp#条件熵的计算
         gainInfo=wholeEntropy-newEntropy#信息增益
+        print('信息增益为：gainInfo：%0.4f————wholeEntropy：%0.4f'%(gainInfo,wholeEntropy))
         if gainInfo>=biggestGain:
             biggestGain=gainInfo
             bestFeatureIndex=f
@@ -171,7 +200,9 @@ def creatDecisionTree(dataSet,labels,bestFeatureLabels):
     del(labels[bestFeatureIndex])
     for v in uniqueBestFeatureValues:
         newDataSet=splitDataSet(dataSet,bestFeatureIndex,v)#按照最优特征的每一项值来划分数据集
-        decisionTree[bestFeatureLabel][v]=creatDecisionTree(newDataSet,labels,bestFeatureLabels)#这里就是递归算法
+        # print(newDataSet)
+        subLabels=labels.copy()
+        decisionTree[bestFeatureLabel][v]=creatDecisionTree(newDataSet,subLabels,bestFeatureLabels)#这里就是递归算法
     return decisionTree
 
 def decisionTreeClassifier(decisionTree,featuresLabels,testVec):
@@ -224,6 +255,10 @@ if __name__ == '__main__':
         print('给与放贷')
     storeDecisionTree(decisionTree,'storeDecisionTree')
     print(grapDecisionTree('storeDecisionTree'))
+    # dataSet, labels = create_test_DataSet()
+    # bestFeatureLabels = []
+    # decisionTree = creatDecisionTree(dataSet, labels, bestFeatureLabels)
+    # print(decisionTree)
 
 
 
