@@ -27,7 +27,7 @@ def showMultiClassROCAndAUC():
     iris=datasets.load_iris()
     trainDataSet=iris.data
     trainLabel=iris.target
-    #测试集按照0.3的比例选取随机选取，然后random_state保证程序每次选取的随机数都是一样的
+    #测试集按照0.5的比例选取随机选取，然后random_state保证程序每次选取的随机数都是一样的
     x_train,x_test,y_train,y_test=train_test_split(trainDataSet,trainLabel,test_size=0.5,random_state=1)
     #二值化
     y_test=label_binarize(y_test,classes=[0,1,2])

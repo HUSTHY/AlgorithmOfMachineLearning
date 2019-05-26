@@ -34,6 +34,7 @@ def loadDataSet(fileName):
 
 def classificationDataSet(dataSet, label):
     dataSet=np.array(dataSet);label=np.array(label)
+    print('dataSet:',np.shape(dataSet))
     #分层k折交叉验证数据划分
     skf = StratifiedKFold(n_splits=5)
     Dtree=DecisionTreeClassifier(max_depth=2)
@@ -43,6 +44,7 @@ def classificationDataSet(dataSet, label):
     for trainIndex,testIndex in skf.split(dataSet,label):
         trainDataSet,testDataSet=dataSet[trainIndex],dataSet[testIndex]
         trainLabel,testLabel=label[trainIndex],label[testIndex]
+        print('trainDataSet',(np.shape(trainDataSet)))
         Ada.fit(trainDataSet,trainLabel)
         #预测分类得分：scores把标签从小到大来排列，预测打分
         scores=Ada.predict_proba(testDataSet)

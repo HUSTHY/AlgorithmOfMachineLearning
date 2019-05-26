@@ -61,7 +61,7 @@ def minErrorClassification(trainDataSet, trainLabel,testDataSet,testLabel,clfs,D
         error=1-clf.score(trainDataSet,trainLabel)
         testPreRes=clf.predict(testDataSet)
         trainPreRes=clf.predict(trainDataSet)
-        # print('训练集中单个分类器分类准确率：%f'%(clf.score(trainDataSet,trainLabel)))
+        print('训练集中单个分类器分类准确率：%f'%(clf.score(trainDataSet,trainLabel)))
         # print('测试集中单个分类器分类准确率：%f' % (clf.score(testDataSet, testLabel)))
         # print('error:%f'%error)
         if minError>error:
@@ -87,15 +87,18 @@ def loadDataSet(fileName):
 if __name__ == '__main__':
     trainDataSet, trainLabel=loadDataSet('HorseData\horseColicTraining.txt')
     testDataSet,testLabel=loadDataSet('HorseData\horseColicTest.txt')
-    maxIter=11
-    clf0=SVC(C=500,kernel='rbf',max_iter=-1,gamma=0.001)
-    clf1=DecisionTreeClassifier(max_depth=2)
-    clf2=LogisticRegression(penalty='l2',max_iter=2000,C=0.0074,solver='saga')
+    maxIter=20
+    clf0=SVC(C=500,kernel='linear',max_iter=-1,gamma=0.001)
+    clf1 = SVC(C=400, kernel='linear', max_iter=-1, gamma=0.01)
+    clf2 = SVC(C=350, kernel='linear', max_iter=-1, gamma=0.1)
+
+    # clf1=DecisionTreeClassifier(max_depth=2)
+    # clf2=LogisticRegression(penalty='l2',max_iter=2000,C=0.0074,solver='saga')
     clf3 = DecisionTreeClassifier(max_depth=2)
     clf4 = DecisionTreeClassifier(max_depth=3)
     clf5 = DecisionTreeClassifier(max_depth=4)
     clfs=[clf0,clf1,clf2]
-    clfs = [clf3, clf4, clf5]
+    # clfs = [clf3, clf4, clf5]
     alphas,Classifiers,testFinalRes=myOwnAdaBoost(trainDataSet, trainLabel,testDataSet,testLabel,clfs,maxIter)
     errorCount=0
     for i in range(len(testLabel)):
